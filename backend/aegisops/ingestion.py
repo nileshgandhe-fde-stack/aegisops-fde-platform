@@ -12,6 +12,8 @@ from typing import Protocol, Sequence
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from aegisops.metrics import record_pii_entities_redacted
+
 
 @dataclass(frozen=True)
 class Document:
@@ -65,6 +67,7 @@ class PresidioRedactor:
             analyzer_results=results,
             operators={"DEFAULT": OperatorConfig("replace", {"new_value": "<REDACTED>"})},
         )
+        record_pii_entities_redacted(len(results))
         return redacted.text
 
 
